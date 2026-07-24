@@ -1,12 +1,17 @@
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
-const { withNativeWind } = require('nativewind/metro')
-/**
- * Metro configuration
- * https://reactnative.dev/docs/metro
- *
- * @type {import('@react-native/metro-config').MetroConfig}
- */
-const config = {};
+const path = require("path");
+const { getDefaultConfig } = require("@react-native/metro-config");
+const { withNativeWind } = require("nativewind/metro");
 
-const mergedConfig = mergeConfig(getDefaultConfig(__dirname), config);
-module.exports = withNativeWind(mergedConfig, { input: './global.css' })
+const projectRoot = __dirname;
+const workspaceRoot = path.resolve(projectRoot, "../..");
+
+const config = getDefaultConfig(projectRoot);
+
+config.watchFolders = [workspaceRoot];
+
+// Let Metro follow pnpm's symlinks.
+config.resolver.disableHierarchicalLookup = false;
+
+module.exports = withNativeWind(config, {
+  input: "./global.css",
+});

@@ -11,6 +11,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import "./global.css"
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -28,7 +29,7 @@ function AppContent() {
 
   return (
     <View style={styles.container}>
-      <Text className="text-3xl font-bold underline">QueueLess</Text>
+      <Text className="text-5xl text-green-800 font-bold underline">QueueLess</Text>
     </View>
   );
 }
