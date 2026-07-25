@@ -187,6 +187,7 @@ Data source:
 - Customers resist installing app.
 - Notification failures.
 - Poor onboarding.
+- Guest phone numbers may be entered incorrectly without OTP verification, which can misroute notifications.
 
 ## 11. Assumptions
 

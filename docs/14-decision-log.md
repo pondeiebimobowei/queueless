@@ -290,7 +290,7 @@ Store pricing data on services so estimated lost revenue can be calculated.
 **Status:** Accepted
 
 ## Decision
-Use a service-level rolling ETA based on queue position and historical service duration.
+Use a service-level rolling ETA based on queue position, qualified staff capacity, and historical service duration.
 
 ## Rationale
 - Keeps the MVP implementable.
@@ -300,10 +300,30 @@ Use a service-level rolling ETA based on queue position and historical service d
 ## Consequences
 - ETA is an estimate, not a guarantee.
 - Realtime updates must recalculate ETA when queue state changes.
+- ETA must account for multiple concurrently available staff assigned to the service.
 
 ---
 
-# ADR-020: Long-Term Vision
+# ADR-020: Guest Queue Access Token
+
+**Status:** Accepted
+
+## Decision
+Issue a random opaque access token when a guest joins a queue and require it for guest self-service actions.
+
+## Rationale
+- Preserves the no-install, no-account first-join flow without making guest entries publicly mutable.
+- Prevents queue-entry UUID guessing from becoming a security issue.
+- Keeps the guest path simple while still protecting leave/check-in/status actions.
+
+## Consequences
+- The customer app must store the token locally.
+- Self-service endpoints must accept either Firebase auth or the guest token.
+- Queue entry identifiers alone must never authorize guest actions.
+
+---
+
+# ADR-021: Long-Term Vision
 
 QueueLess evolves into an operating platform for walk-in businesses by adding:
 - Appointments

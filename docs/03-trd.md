@@ -91,8 +91,14 @@ QueueLess uses a service-level rolling estimate that is recalculated as queue st
 
 Baseline approach:
 - Start with `estimatedDurationMinutes` for the selected service.
-- Estimate wait time as `estimatedDurationMinutes * number of customers ahead in the session`.
+- Determine the number of qualified staff that are currently available or expected to be available soon for that service.
+- Estimate wait time as `estimatedDurationMinutes * ceil(number of customers ahead in the session / qualified staff capacity)`.
 - Refine over time using completed service durations when data is available.
+
+Qualified staff capacity:
+- Count staff linked to the service through `staff_services`.
+- Exclude staff marked `OFFLINE`.
+- Treat `BUSY` staff as unavailable until their current service is expected to complete.
 
 Recalculation triggers:
 - Customer joins or leaves
