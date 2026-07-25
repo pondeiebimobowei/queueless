@@ -232,7 +232,78 @@ Supporting KPIs:
 
 ---
 
-# ADR-016: Long-Term Vision
+# ADR-016: Customer Join Friction
+
+**Status:** Accepted
+
+## Decision
+Allow customers to join a queue from a QR code or business link without requiring app installation or account creation first.
+
+## Rationale
+- Reduces first-time customer friction.
+- Matches walk-in behavior at the point of service.
+- Preserves the option to sign in later for saved history and notifications.
+
+## Consequences
+- Customer onboarding must support a guest path.
+- Authentication becomes optional for first queue join and mandatory only for saved history, repeat visits, or notification preferences.
+
+---
+
+# ADR-017: Customer Identity Model
+
+**Status:** Accepted
+
+## Decision
+Model customers as business-scoped records in the MVP.
+
+## Rationale
+- Aligns with the multi-tenant data model.
+- Simplifies queue history and notification logic per business.
+- Avoids cross-business data leakage.
+
+## Consequences
+- The same phone number may exist in multiple businesses.
+- Customer uniqueness is enforced per business, not globally.
+
+---
+
+# ADR-018: Revenue Analytics Source
+
+**Status:** Accepted
+
+## Decision
+Store pricing data on services so estimated lost revenue can be calculated.
+
+## Rationale
+- The analytics requirement needs a reliable data source.
+- Service-level pricing is the simplest operational proxy for MVP.
+
+## Consequences
+- Services must include price amount and currency fields.
+- Estimated lost revenue should be calculated from service price and queue abandonment data.
+
+---
+
+# ADR-019: ETA Calculation
+
+**Status:** Accepted
+
+## Decision
+Use a service-level rolling ETA based on queue position and historical service duration.
+
+## Rationale
+- Keeps the MVP implementable.
+- Provides a transparent starting estimate.
+- Improves over time as completed sessions accumulate.
+
+## Consequences
+- ETA is an estimate, not a guarantee.
+- Realtime updates must recalculate ETA when queue state changes.
+
+---
+
+# ADR-020: Long-Term Vision
 
 QueueLess evolves into an operating platform for walk-in businesses by adding:
 - Appointments

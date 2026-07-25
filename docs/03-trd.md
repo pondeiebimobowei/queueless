@@ -63,6 +63,9 @@ Core models:
 - ServiceSession
 - Notification
 
+Pricing data:
+- Services include `priceAmount` and `priceCurrency` for analytics and receipt-style reporting.
+
 # API
 REST for CRUD.
 WebSockets for:
@@ -81,6 +84,25 @@ Events:
 # Realtime Requirements
 Clients subscribe to business queue channel.
 Broadcast queue state changes.
+
+# ETA Calculation
+
+QueueLess uses a service-level rolling estimate that is recalculated as queue state changes.
+
+Baseline approach:
+- Start with `estimatedDurationMinutes` for the selected service.
+- Estimate wait time as `estimatedDurationMinutes * number of customers ahead in the session`.
+- Refine over time using completed service durations when data is available.
+
+Recalculation triggers:
+- Customer joins or leaves
+- Customer is called, skipped, recalled, or completed
+- Staff availability changes
+- Queue session status changes
+
+Notes:
+- ETA should be treated as a live estimate, not a guaranteed appointment time.
+- The same algorithm should be used by API responses and WebSocket broadcasts so the UI stays consistent.
 
 # File Storage
 Cloud object storage for logos/profile images.

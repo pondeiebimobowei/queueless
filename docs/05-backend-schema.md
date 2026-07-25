@@ -96,6 +96,8 @@ Fields:
 - businessId (FK)
 - name
 - estimatedDurationMinutes
+- priceAmount
+- priceCurrency
 - isVisible
 - isActive
 - createdAt
@@ -177,7 +179,8 @@ Purpose:
 Stores customer records.
 
 Fields:
-- id
+- id (UUID, PK)
+- businessId (FK)
 - phone
 - firstName
 - lastName
@@ -185,7 +188,9 @@ Fields:
 - updatedAt
 
 Indexes:
+- businessId
 - phone
+- businessId + phone (unique)
 
 ---
 
@@ -310,6 +315,20 @@ Every operational table contains:
 All queries must be scoped by businessId.
 
 Never expose cross-business data.
+
+## Customer Identity Model
+
+Customers are scoped per business in the MVP.
+
+Why:
+- Keeps queue history simple for each business.
+- Matches the current multi-tenant rule.
+- Avoids cross-business data leakage in customer lookup, notifications, and queue history.
+
+Implications:
+- The same phone number may exist in multiple businesses.
+- Customer uniqueness is enforced per business, not globally.
+- Customer-facing history is business-specific.
 
 # Roles
 

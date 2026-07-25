@@ -45,7 +45,6 @@ This PRD defines the MVP for QueueLess, a mobile-first SaaS platform that helps 
 - Basic analytics
 
 ### Customer App
-- Authentication
 - Search Business & Select Branch
 - Select Service
 - Join queue
@@ -75,6 +74,10 @@ Acceptance Criteria:
 - Users can register.
 - Users can sign in.
 - Password reset supported.
+
+Note:
+- Customer queue joining must support a low-friction guest path from QR or business link.
+- Authentication is required for saved history, notifications, and repeat visits, but not as a hard gate before first queue join.
 
 ### Business Onboarding
 **Priority:** Must Have
@@ -145,6 +148,9 @@ Metrics:
 - Average wait
 - Estimated lost revenue
 
+Data source:
+- Services should capture a price or average ticket value so estimated lost revenue can be computed.
+
 ## 7. User Stories
 
 - As an owner, I can define services for my branch.
@@ -213,4 +219,3 @@ A feature is complete when:
 - Manual QA completed.
 - Documentation updated.
 - Product owner approves.
-

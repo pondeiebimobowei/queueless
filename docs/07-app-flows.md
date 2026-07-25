@@ -42,16 +42,19 @@ Join a queue with minimal friction.
 
 Flow:
 1. Open app
-2. Sign in
-3. Find business or scan QR
-4. Select branch (if applicable)
-5. Select service
-6. View wait estimate for service
-7. Join queue
-8. Receive confirmation
+2. Scan QR or open business link
+3. Find business or select branch
+4. Select service
+5. View wait estimate for service
+6. Join queue as guest or sign in to save history
+7. Receive confirmation
 
 Success:
 Customer has queue position.
+
+Note:
+- Authentication is optional for first-time queue join.
+- The app should not require installation or account creation before a customer can enter a queue from a QR or share link.
 
 ---
 
@@ -68,13 +71,13 @@ Business:
 # 4. Remote Join Flow
 
 Customer:
-1. Select business
+1. Open business link or QR destination
 2. Select branch
 3. Select service
 4. View service queue
 5. Join
-4. Receive ETA
-5. Track live progress
+6. Receive ETA
+7. Track live progress
 
 System:
 - Create QueueEntry
@@ -159,6 +162,8 @@ Displays:
 - Left
 - Avg wait
 - Estimated lost revenue
+
+Estimated lost revenue is derived from service price or average ticket value.
 
 ---
 
