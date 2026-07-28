@@ -10,7 +10,7 @@
 
 # Executive Summary
 
-QueueLess is a mobile-first SaaS platform that helps walk-in businesses reduce operational chaos by digitizing customer flow management.
+QueueLess is a mobile-first SaaS platform that helps walk-in service businesses reduce operational chaos by digitizing customer flow management.
 
 Unlike appointment software, QueueLess focuses on businesses where customers primarily arrive without appointments and waiting is an unavoidable part of the experience.
 
@@ -181,6 +181,15 @@ Allows customers to:
 
 The experience is intentionally simple.
 
+## Product Shape
+
+QueueLess is best served as two separate mobile clients sharing one backend:
+
+- QueueLess Business
+- QueueLess Customer
+
+This keeps each experience focused on its own workflow while preserving a shared platform, shared data model, and shared real-time infrastructure.
+
 ---
 
 # Core Value Proposition
@@ -226,8 +235,8 @@ Operational data enables future business intelligence.
 
 # The "Shopify for Walk-in Businesses" Approach
 
-QueueLess is designed as a vertical-first, horizontal-ready product. 
-It is not an app just for one industry (like salons). It is a universal queue engine that adapts to any service station business.
+QueueLess is designed as a vertical-first, horizontal-ready product.
+It is not an app just for one industry. It is a universal queue engine that adapts to any service station business.
 
 Instead of hardcoding industry-specific terms, QueueLess uses generic, configurable concepts arranged in a scalable hierarchy:
 - **Business** (The main company)
@@ -237,7 +246,7 @@ Instead of hardcoding industry-specific terms, QueueLess uses generic, configura
 - **Queue Sessions** (The daily queue generated for a specific service)
 - **Visitor/Customer** (The end user joining a queue session)
 
-The MVP targets multi-station businesses, but the core engine remains generic. 
+The MVP targets multi-station service businesses, but the core engine remains generic.
 The UI is neutral, modern, and industry-agnostic, featuring universal operational metrics (Customers Waiting, Average Wait Time, Walkaways) rather than industry-specific ones. This preserves a straightforward path to expand into other walk-in service businesses without a major rewrite.
 
 ---
@@ -246,7 +255,7 @@ The UI is neutral, modern, and industry-agnostic, featuring universal operationa
 
 ## Primary Customer
 
-Multi-station businesses.
+Multi-station service businesses.
 
 Characteristics:
 

@@ -45,7 +45,7 @@ Flow:
 2. Scan QR or open business link
 3. Find business or select branch
 4. Select service
-5. View wait estimate for service
+5. View service queue and wait estimate
 6. Join queue as guest or sign in to save history
 7. Receive confirmation
 
@@ -55,6 +55,7 @@ Customer has queue position.
 Note:
 - Authentication is optional for first-time queue join.
 - The app should not require installation or account creation before a customer can enter a queue from a QR or share link.
+- Phone OTP is the path for customers who want to save history, restore queue history, or manage notification preferences.
 
 ---
 
@@ -64,7 +65,7 @@ Business:
 1. Tap "Add Walk-in" for a specific service
 2. Enter name/phone
 3. Assign staff (optional)
-4. Customer added to service queue session
+4. Visitor added to service queue session
 
 ---
 
@@ -96,6 +97,7 @@ Customer sees:
 Business sees:
 - Ordered queue
 - Queue actions
+- Service-level queue tabs or cards per branch
 
 Realtime updates via WebSockets.
 
@@ -157,11 +159,13 @@ System:
 Owner opens dashboard.
 
 Displays:
-- Joined
-- Served
+- Customers Waiting
+- Customers Served
 - Left
 - Avg wait
 - Estimated lost revenue
+- Active Staff
+- Current Queue
 
 Estimated lost revenue is derived from service price or average ticket value.
 

@@ -6,7 +6,7 @@
 Build QueueLess as a mobile-first, production-quality SaaS. Optimize for clarity, maintainability, and rapid iteration.
 
 ## Product Context
-- React Native apps: Business and Customer
+- React Native apps: QueueLess Business and QueueLess Customer
 - Backend: NestJS
 - Database: PostgreSQL + Prisma
 - Architecture: Modular monolith
@@ -21,14 +21,30 @@ Build QueueLess as a mobile-first, production-quality SaaS. Optimize for clarity
 
 ## Folder Structure
 /apps
-  business_app
-  customer_app
-  backend
+  mobile
+    src
+      app
+      core
+      shared
+      features
+  mobile_customer
+    src
+      app
+      core
+      shared
+      features
+  web
+  api
 /packages
   shared_ui
   shared_models
   shared_utils
 /docs
+
+## Source of Truth
+- `docs/12-agents.md` and `docs/11-engineering-standards.md` must stay aligned on the folder structure above.
+- Use the `apps/mobile` and `apps/mobile_customer` conventions for the QueueLess Business and QueueLess Customer apps.
+- Use `apps/web` and `apps/api` for the web client and NestJS backend.
 
 ## Coding Standards
 - Never use `any`.

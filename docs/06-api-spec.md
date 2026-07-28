@@ -3,23 +3,7 @@
 **Version:** 1.0
 **Style:** REST + WebSockets
 **Format:** JSON
-**Authentication:** Firebase JWT Bearer Token for staff/owner actions; guest queue actions use a per-entry access token.
-
-# API Principles
-
-- REST for CRUD operations
-- WebSockets for realtime queue updates
-- Versioned endpoints (`/v1`)
-- Consistent error responses
-- Resource-oriented URLs
-
-Base URL:
-`/api/v1# QueueLess — API Specification
-
-**Version:** 1.0
-**Style:** REST + WebSockets
-**Format:** JSON
-**Authentication:** Firebase JWT Bearer Token for staff/owner actions; guest queue actions use a per-entry access token.
+**Authentication:** QueueLess JWT Bearer Token for authenticated users; guest queue actions use a per-entry access token.
 
 # API Principles
 
@@ -38,24 +22,135 @@ Base URL:
 
 ## POST /auth/register
 
-Registers a new user.
+Create a platform user account.
 
 Request:
 {
-  "idToken": "<firebase_id_token>"
+  "email": "owner@queueless.com",
+  "password": "strong-password"
 }
 
 Response:
 {
   "accessToken": "...",
+  "refreshToken": "...",
   "user": {}
 }
+
+Notes:
+- Registration creates a plain user account.
+- Roles are assigned server-side, not supplied by the client.
+- Becoming an owner happens when the user creates a business.
 
 ---
 
 ## POST /auth/login
 
-Validates Firebase token and returns application session.
+Validate credentials and return a new session.
+
+Request:
+{
+  "email": "owner@queueless.com",
+  "password": "strong-password"
+}
+
+Response:
+{
+  "accessToken": "...",
+  "refreshToken": "...",
+  "user": {}
+}
+
+---
+
+## POST /auth/refresh
+
+Rotate the refresh token and issue a new access token.
+
+Request:
+{
+  "refreshToken": "..."
+}
+
+Response:
+{
+  "accessToken": "...",
+  "refreshToken": "..."
+}
+
+---
+
+## POST /auth/logout
+
+Revoke the current refresh token.
+
+---
+
+## POST /auth/forgot-password
+
+Send a password reset email.
+
+Request:
+{
+  "email": "owner@queueless.com"
+}
+
+---
+
+## POST /auth/reset-password
+
+Reset a password with a valid token.
+
+Request:
+{
+  "token": "...",
+  "newPassword": "strong-password"
+}
+
+---
+
+## POST /auth/verify-email
+
+Verify an email address with a one-time token.
+
+Request:
+{
+  "token": "..."
+}
+
+---
+
+## POST /auth/send-phone-otp
+
+Send a one-time code to a customer phone number for account linking or sign-in.
+
+Request:
+{
+  "phone": "+234..."
+}
+
+---
+
+## POST /auth/verify-phone-otp
+
+Verify a phone OTP and issue a QueueLess session.
+
+Request:
+{
+  "phone": "+234...",
+  "code": "123456"
+}
+
+Response:
+{
+  "accessToken": "...",
+  "refreshToken": "...",
+  "user": {}
+}
+
+Notes:
+- Phone OTP is the bridge between guest customer records and authenticated customer accounts.
+- Use this for saving history, repeat visits, and verified notification preferences.
 
 ---
 
@@ -63,7 +158,7 @@ Validates Firebase token and returns application session.
 
 ## POST /queue-sessions/{id}/entries
 
-Join queue as a guest or signed-in customer.
+Join a queue as a guest or signed-in customer.
 
 Request:
 {
@@ -82,12 +177,18 @@ Response:
   "accessToken": "guest_entry_secret"
 }
 
+Notes:
+- Signed-in customer flow: send `customerId` only.
+- Guest flow: send `phone`, `firstName`, and `lastName`; the backend creates or reuses the business-scoped customer record.
+- `assignedStaffId` is optional in either path.
+- Every queue entry returns an `accessToken` so guest self-service actions remain private.
+
 ## GET /queue-entries/{id}
 
 Get queue entry details.
 
 Auth:
-- Firebase JWT for authenticated users
+- QueueLess JWT for authenticated users
 - `accessToken` for guest self-service access
 
 ## DELETE /queue-entries/{id}
@@ -95,7 +196,7 @@ Auth:
 Leave queue.
 
 Auth:
-- Firebase JWT for authenticated users
+- QueueLess JWT for authenticated users
 - `accessToken` for guest self-service access
 
 ## PATCH /queue-entries/{id}/check-in
@@ -103,23 +204,40 @@ Auth:
 Customer checked in.
 
 Auth:
-- Firebase JWT for authenticated users
+- QueueLess JWT for authenticated users
 - `accessToken` for guest self-service access
 
-Note:
-- Guest queue entries must receive a random opaque access token at join time.
-- The token should be required for any self-service action and stored locally by the customer app.
-- Queue entry UUIDs alone must not be sufficient to read or modify guest state.
-- The request body represents two mutually exclusive paths:
-  - Signed-in customer: send `customerId` and omit guest profile fields.
-  - Guest customer: send `phone`, `firstName`, and `lastName`; the backend creates the business-scoped customer record.
-- `assignedStaffId` is optional in either path.
+## PATCH /queue-entries/{id}/call
 
-Guest Flow:
-1. Customer submits guest details.
-2. Backend creates or reuses the business-scoped customer record for `businessId + phone`.
-3. Backend creates the queue entry.
-4. Backend returns `accessToken` for self-service access.
+Call customer.
+
+Auth:
+- QueueLess JWT for authenticated business users
+
+## PATCH /queue-entries/{id}/skip
+
+Skip customer.
+
+Auth:
+- QueueLess JWT for authenticated business users
+
+## PATCH /queue-entries/{id}/recall
+
+Recall customer.
+
+Auth:
+- QueueLess JWT for authenticated business users
+
+## PATCH /queue-entries/{id}/complete
+
+Complete service.
+
+Auth:
+- QueueLess JWT for authenticated business users
+
+Notes:
+- Guest token access is only for self-service actions on the guest's own queue entry.
+- Staff actions always require authenticated business access.
 
 ---
 
@@ -127,7 +245,7 @@ Guest Flow:
 
 ## GET /businesses
 
-Returns businesses for authenticated owner.
+Returns businesses for the authenticated user.
 
 ## POST /businesses
 
@@ -135,7 +253,7 @@ Create a business.
 
 Request:
 {
-  "name": "Fade Masters",
+  "name": "Glow Beauty",
   "phone": "+234..."
 }
 
@@ -143,6 +261,9 @@ Response:
 {
   "id": "uuid"
 }
+
+Notes:
+- The authenticated creator becomes the OWNER of the business.
 
 ## GET /businesses/{id}
 
@@ -152,11 +273,13 @@ Get business details.
 
 Update business.
 
+---
+
 # Branches
 
 ## GET /branches
 
-List branches for authenticated owner.
+List branches for the authenticated business user.
 
 ## POST /branches
 
@@ -191,7 +314,9 @@ Create a service.
 Request:
 {
   "name": "Hair",
-  "estimatedDurationMinutes": 30
+  "estimatedDurationMinutes": 30,
+  "priceAmount": 5000,
+  "priceCurrency": "NGN"
 }
 
 ## PATCH /services/{id}
@@ -218,7 +343,7 @@ Request:
 
 ## PATCH /staff/{id}
 
-Update staff (including service assignments).
+Update staff, including service assignments.
 
 ## DELETE /staff/{id}
 
@@ -236,262 +361,28 @@ List customers.
 
 Customer details.
 
+## POST /customers
+
+Create or link a customer record.
+
+Request:
+{
+  "phone": "+234...",
+  "firstName": "Ada",
+  "lastName": "Okafor"
+}
+
+---
+
 # Queue Sessions
 
 ## GET /services/{serviceId}/queue-sessions
 
-Get queue sessions for a service (e.g. today's active session).
+Get queue sessions for a service, usually today's active session.
 
 ## POST /queue-sessions/{id}/entries
 
 Join queue.
-
-Request:
-{
-  "assignedStaffId":"uuid",
-  "customerId":"uuid",
-  "phone":"+234...",
-  "firstName":"Ada",
-  "lastName":"Okafor"
-}
-
-Response:
-{
-  "id":"uuid",
-  "position": 5,
-  "estimatedWaitMinutes": 20,
-  "accessToken": "guest_entry_secret"
-}
-
-Request semantics:
-- Authenticated customer flow: `customerId` only.
-- Guest flow: `phone`, `firstName`, `lastName`.
-- `assignedStaffId` is optional.
-
-Response semantics:
-- `accessToken` is returned for every queue entry so the customer app can support self-service actions even when the customer is not authenticated.
-
-## PATCH /queue-entries/{id}/call
-
-Call customer.
-
-## PATCH /queue-entries/{id}/skip
-
-Skip customer.
-
-## PATCH /queue-entries/{id}/recall
-
-Recall customer.
-
-## PATCH /queue-entries/{id}/check-in
-
-Customer checked in.
-
-## PATCH /queue-entries/{id}/complete
-
-Complete service.
-
-## DELETE /queue-entries/{id}
-
-Leave queue.
-
-Auth:
-- Firebase JWT for authenticated users
-- `accessToken` for guest self-service access
-
----
-
-# Analytics
-
-## GET /analytics/today
-
-Returns:
-- joined
-- served
-- left
-- average wait
-- estimated lost revenue
-
----
-
-# Notifications
-
-## GET /notifications
-
-Notification history.
-
----
-
-# Settings
-
-## GET /settings
-
-Business settings.
-
-## PATCH /settings
-
-Update queue rules.
-
----
-
-# Error Format
-
-{
-  "statusCode":400,
-  "message":"Validation failed",
-  "errors":[]
-}
-
----
-
-# Pagination
-
-{
-  "data":[],
-  "page":1,
-  "limit":20,
-  "total":100
-}
-
----
-
-# WebSocket Events
-
-Client Subscribe
-
-queue:{queueSessionId}
-
-Server Events
-
-queue.joined
-
-queue.updated
-
-queue.called
-
-queue.completed
-
-queue.skipped
-
-notification.sent
-
----
-
-# Status Enums
-
-QueueStatus
-
-WAITING
-
-CALLED
-
-CHECKED_IN
-
-SKIPPED
-
-COMPLETED
-
-LEFT
-
-StaffStatus
-
-AVAILABLE
-
-BUSY
-
-OFFLINE
-
----
-
-# Authentication Flow
-
-Firebase Login
-
-↓
-
-ID Token
-
-↓
-
-NestJS Verification
-
-Guest Join Flow
-
-Guest details or signed-in customer
-
-↓
-
-Queue entry creation
-
-↓
-
-Random access token returned
-
-↓
-
-Customer app stores token locally for self-service actions
-
-↓
-
-Application JWT
-
-↓
-
-Authorized Requests
-
----
-
-# Rate Limits
-
-Authenticated:
-120 req/min
-
-Anonymous:
-30 req/min
-
----
-
-# API Versioning
-
-Current:
-v1
-
-Future:
-v2 introduces appointments without breaking queue endpoints.
-`
-
----
-
-# Authentication
-
-## POST /auth/register
-
-Registers a new user.
-
-Request:
-{
-  "idToken": "<firebase_id_token>"
-}
-
-Response:
-{
-  "accessToken": "...",
-  "user": {}
-}
-
----
-
-## POST /auth/login
-
-Validates Firebase token and returns application session.
-
----
-
-# Guest Queue Access
-
-## POST /queue-sessions/{id}/entries
-
-Join queue as a guest or signed-in customer.
 
 Request:
 {
@@ -510,187 +401,6 @@ Response:
   "accessToken": "guest_entry_secret"
 }
 
-## GET /queue-entries/{id}
-
-Get queue entry details.
-
-Auth:
-- Firebase JWT for authenticated users
-- `accessToken` for guest self-service access
-
-## DELETE /queue-entries/{id}
-
-Leave queue.
-
-Auth:
-- Firebase JWT for authenticated users
-- `accessToken` for guest self-service access
-
-## PATCH /queue-entries/{id}/check-in
-
-Customer checked in.
-
-Auth:
-- Firebase JWT for authenticated users
-- `accessToken` for guest self-service access
-
-Note:
-- Guest queue entries must receive a random opaque access token at join time.
-- The token should be required for any self-service action and stored locally by the customer app.
-- Queue entry UUIDs alone must not be sufficient to read or modify guest state.
-- The request body represents two mutually exclusive paths:
-  - Signed-in customer: send `customerId` and omit guest profile fields.
-  - Guest customer: send `phone`, `firstName`, and `lastName`; the backend creates the business-scoped customer record.
-- `assignedStaffId` is optional in either path.
-
-Guest Flow:
-1. Customer submits guest details.
-2. Backend creates or reuses the business-scoped customer record for `businessId + phone`.
-3. Backend creates the queue entry.
-4. Backend returns `accessToken` for self-service access.
-
----
-
-# Businesses
-
-## GET /businesses
-
-Returns businesses for authenticated owner.
-
-## POST /businesses
-
-Create a business.
-
-Request:
-{
-  "name": "Fade Masters",
-  "phone": "+234..."
-}
-
-Response:
-{
-  "id": "uuid"
-}
-
-## GET /businesses/{id}
-
-Get business details.
-
-## PATCH /businesses/{id}
-
-Update business.
-
-# Branches
-
-## GET /branches
-
-List branches for authenticated owner.
-
-## POST /branches
-
-Create a branch.
-
-Request:
-{
-  "businessId": "uuid",
-  "name": "Lekki Branch"
-}
-
-## GET /branches/{id}
-
-Get branch details.
-
-## PATCH /branches/{id}
-
-Update branch.
-
----
-
-# Services
-
-## GET /branches/{id}/services
-
-List services for a branch.
-
-## POST /branches/{id}/services
-
-Create a service.
-
-Request:
-{
-  "name": "Hair",
-  "estimatedDurationMinutes": 30
-}
-
-## PATCH /services/{id}
-
-Update service.
-
----
-
-# Staff
-
-## GET /branches/{id}/staff
-
-List staff for a branch.
-
-## POST /branches/{id}/staff
-
-Create staff member.
-
-Request:
-{
-  "displayName": "John",
-  "serviceIds": ["uuid1", "uuid2"]
-}
-
-## PATCH /staff/{id}
-
-Update staff (including service assignments).
-
-## DELETE /staff/{id}
-
-Archive staff.
-
----
-
-# Customers
-
-## GET /customers
-
-List customers.
-
-## GET /customers/{id}
-
-Customer details.
-
-# Queue Sessions
-
-## GET /services/{serviceId}/queue-sessions
-
-Get queue sessions for a service (e.g. today's active session).
-
-## POST /queue-sessions/{id}/entries
-
-Join queue.
-
-Request:
-{
-  "assignedStaffId":"uuid",
-  "customerId":"uuid",
-  "phone":"+234...",
-  "firstName":"Ada",
-  "lastName":"Okafor"
-}
-
-Response:
-{
-  "id":"uuid",
-  "position": 5,
-  "estimatedWaitMinutes": 20,
-  "accessToken": "guest_entry_secret"
-}
-
 Request semantics:
 - Authenticated customer flow: `customerId` only.
 - Guest flow: `phone`, `firstName`, `lastName`.
@@ -698,34 +408,6 @@ Request semantics:
 
 Response semantics:
 - `accessToken` is returned for every queue entry so the customer app can support self-service actions even when the customer is not authenticated.
-
-## PATCH /queue-entries/{id}/call
-
-Call customer.
-
-## PATCH /queue-entries/{id}/skip
-
-Skip customer.
-
-## PATCH /queue-entries/{id}/recall
-
-Recall customer.
-
-## PATCH /queue-entries/{id}/check-in
-
-Customer checked in.
-
-## PATCH /queue-entries/{id}/complete
-
-Complete service.
-
-## DELETE /queue-entries/{id}
-
-Leave queue.
-
-Auth:
-- Firebase JWT for authenticated users
-- `accessToken` for guest self-service access
 
 ---
 
@@ -739,6 +421,8 @@ Returns:
 - left
 - average wait
 - estimated lost revenue
+- active staff
+- current queue
 
 ---
 
@@ -765,9 +449,9 @@ Update queue rules.
 # Error Format
 
 {
-  "statusCode":400,
-  "message":"Validation failed",
-  "errors":[]
+  "statusCode": 400,
+  "message": "Validation failed",
+  "errors": []
 }
 
 ---
@@ -775,32 +459,27 @@ Update queue rules.
 # Pagination
 
 {
-  "data":[],
-  "page":1,
-  "limit":20,
-  "total":100
+  "data": [],
+  "page": 1,
+  "limit": 20,
+  "total": 100
 }
 
 ---
 
 # WebSocket Events
 
-Client Subscribe
+Client Subscribe:
 
 queue:{queueSessionId}
 
-Server Events
+Server Events:
 
 queue.joined
-
 queue.updated
-
 queue.called
-
 queue.completed
-
 queue.skipped
-
 notification.sent
 
 ---
@@ -833,39 +512,19 @@ OFFLINE
 
 # Authentication Flow
 
-Firebase Login
+Email/password or phone OTP
 
 ↓
 
-ID Token
+QueueLess login endpoint
 
 ↓
 
-NestJS Verification
-
-Guest Join Flow
-
-Guest details or signed-in customer
+NestJS session issuance
 
 ↓
 
-Queue entry creation
-
-↓
-
-Random access token returned
-
-↓
-
-Customer app stores token locally for self-service actions
-
-↓
-
-Application JWT
-
-↓
-
-Authorized Requests
+QueueLess access token and refresh token
 
 ---
 
@@ -874,15 +533,5 @@ Authorized Requests
 Authenticated:
 120 req/min
 
-Anonymous:
+Guest:
 30 req/min
-
----
-
-# API Versioning
-
-Current:
-v1
-
-Future:
-v2 introduces appointments without breaking queue endpoints.

@@ -47,9 +47,11 @@ Define the technical architecture for the QueueLess MVP to enable rapid implemen
 - Analytics
 
 # Authentication
-- Firebase Authentication
-- JWT validation in NestJS
-- Role-based authorization (Owner, Staff)
+- Backend-owned authentication in NestJS
+- Argon2id password hashing
+- JWT access tokens plus rotating refresh tokens
+- Role-based authorization (Owner, Staff, Customer, Admin)
+- Optional social login adapters can issue QueueLess sessions, but the backend remains the session authority
 
 # Database
 PostgreSQL with Prisma.
@@ -99,6 +101,7 @@ Qualified staff capacity:
 - Count staff linked to the service through `staff_services`.
 - Exclude staff marked `OFFLINE`.
 - Treat `BUSY` staff as unavailable until their current service is expected to complete.
+- Expected completion can be derived from the service session's start time (`calledAt` or `checkedInAt`) plus the service's `estimatedDurationMinutes`.
 
 Recalculation triggers:
 - Customer joins or leaves

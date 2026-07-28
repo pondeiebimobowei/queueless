@@ -94,13 +94,22 @@ Test:
 
 ### Integration Tests
 
-Critical flows:
+QueueLess Business critical flows:
 - Login
 - Business onboarding
+- Open queue
+- Live queue updates
+- Call next
+- Skip
+- Recall
+- Complete service
+
+QueueLess Customer critical flows:
+- Guest join
+- Login
 - Join queue
 - Live queue updates
 - Leave queue
-- Complete service
 
 ---
 
@@ -126,6 +135,12 @@ Business:
 6. Complete service
 
 Customer:
+1. Guest join with phone/name only
+2. Receive notification
+3. Check in
+4. Leave queue
+
+Authenticated customer:
 1. Login
 2. Join queue
 3. Receive notification
@@ -145,6 +160,8 @@ Authentication
 - Login
 - Logout
 - Password reset
+- Phone OTP verification
+- Guest access token rejection when invalid or missing
 
 Business
 - Create business

@@ -27,7 +27,7 @@ This document defines the engineering standards for QueueLess to ensure consiste
       /core
       /shared
       /features
-  /mobile-_customer
+  /mobile_customer
     /src
       /app
       /core
@@ -95,7 +95,8 @@ feat(queue): add customer recall action
 
 - Modular monolith.
 - Feature-first folders.
-- Mobile app code belongs in `apps/mobile/src`, not in broad `screens` or `services` buckets.
+- QueueLess Business code belongs in `apps/mobile/src`, and QueueLess Customer code belongs in `apps/mobile_customer/src`.
+- Neither mobile app should organize code in broad `screens` or `services` buckets.
 - Features own their UI, hooks, API functions, local store, and types.
 - Core owns cross-cutting concerns like API, auth, storage, notifications, sockets, and permissions.
 - Shared owns reusable UI and helpers only.

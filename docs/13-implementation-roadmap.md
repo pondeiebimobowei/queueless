@@ -23,7 +23,8 @@
 
 ### Deliverables
 - Monorepo setup
-- React Native mobile app scaffold with feature-first folders
+- React Native business app scaffold with feature-first folders
+- React Native customer app scaffold with feature-first folders
 - NestJS backend
 - PostgreSQL + Prisma
 - CI/CD pipeline
@@ -51,12 +52,12 @@ Success Criteria:
 - Business onboarding
 - Customer onboarding
 - Navigation
-- Feature-owned APIs, hooks, and UI primitives
+- Feature-owned APIs, hooks, and UI primitives in each app
 - Core services for auth, storage, notifications, and realtime sockets
 
 Success Criteria:
-- Businesses can register and onboard.
-- Customers can authenticate.
+- Businesses can register and onboard in QueueLess Business.
+- Customers can join queues and manage their queue state in QueueLess Customer.
 
 ---
 

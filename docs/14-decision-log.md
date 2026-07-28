@@ -29,13 +29,14 @@ Build native mobile applications before any web experience.
 **Status:** Accepted
 
 ## Decision
-Launch with multi-station businesses, salons, and similar walk-in service businesses.
+Launch with multi-station service businesses, starting with barbershops and salons.
 
 ## Rationale
 - High frequency of walk-in traffic.
 - Operational chaos is common.
 - Faster sales cycle than healthcare or government.
 - Lower compliance burden.
+- Clear wedge for proving the configurable queue engine.
 
 ---
 
@@ -112,7 +113,7 @@ Notifications:
 - Firebase Cloud Messaging
 
 Authentication:
-- Firebase Authentication
+- Backend-owned auth service in NestJS
 
 ---
 
@@ -165,10 +166,18 @@ Metrics:
 **Status:** Accepted
 
 ## Decision
-Delegate identity management to Firebase Authentication.
+Delegate identity management to the QueueLess backend.
 
-Reason:
-Avoid building authentication infrastructure.
+## Rationale
+- Single source of truth for users, roles, organizations, and permissions.
+- Easier multi-tenancy, invitations, audits, and billing later.
+- Avoids vendor lock-in for a core platform concern.
+
+## Consequences
+- NestJS owns registration, login, logout, refresh, password reset, and email verification.
+- Passwords are hashed in the backend with Argon2id.
+- JWT access tokens and rotating refresh tokens are issued by the API.
+- Social login can still be added later through the backend without changing the session model.
 
 ---
 
@@ -318,12 +327,31 @@ Issue a random opaque access token when a guest joins a queue and require it for
 
 ## Consequences
 - The customer app must store the token locally.
-- Self-service endpoints must accept either Firebase auth or the guest token.
+- Self-service endpoints must accept either QueueLess auth or the guest token.
 - Queue entry identifiers alone must never authorize guest actions.
 
 ---
 
-# ADR-021: Long-Term Vision
+# ADR-021: Customer Phone Auth Bridge
+
+**Status:** Accepted
+
+## Decision
+Use phone OTP as the bridge from guest customer records to authenticated customer accounts.
+
+## Rationale
+- Customer records are phone-scoped and business-scoped in the MVP.
+- Phone OTP keeps guest join friction low while still enabling a verified sign-in path.
+- It provides a clean way to save history, repeat visits, and notification preferences.
+
+## Consequences
+- Customer-auth endpoints must support phone OTP verification.
+- A guest join can later be linked to a platform user account without duplicating queue history.
+- Customer-facing sign-in should not depend on email/password alone.
+
+---
+
+# ADR-022: Long-Term Vision
 
 QueueLess evolves into an operating platform for walk-in businesses by adding:
 - Appointments

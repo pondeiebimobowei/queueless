@@ -23,7 +23,7 @@ This PRD defines the MVP for QueueLess, a mobile-first SaaS platform that helps 
 ## 3. Personas
 
 ### Business Owner
-- Owns a 5–20 station business.
+- Owns a 5–20 staff walk-in service business.
 - Manages daily operations.
 - Wants fewer walkaways and less chaos.
 
@@ -35,7 +35,7 @@ This PRD defines the MVP for QueueLess, a mobile-first SaaS platform that helps 
 
 ### Business App
 - Authentication
-- Business onboarding (Branch & Service setup)
+- Business onboarding (branch, service, and station setup)
 - Staff & Assignment management
 - Queue Session management (per Service)
 - Walk-in registration
@@ -46,7 +46,7 @@ This PRD defines the MVP for QueueLess, a mobile-first SaaS platform that helps 
 
 ### Customer App
 - Search Business & Select Branch
-- Select Service
+- Select Service Queue
 - Join queue
 - View live position
 - Push notifications
@@ -77,7 +77,7 @@ Acceptance Criteria:
 
 Note:
 - Customer queue joining must support a low-friction guest path from QR or business link.
-- Authentication is required for saved history, notifications, and repeat visits, but not as a hard gate before first queue join.
+- Authentication for customers uses phone OTP as the bridge from guest queue records to saved history, notifications, and repeat visits, but not as a hard gate before first queue join.
 
 ### Business Onboarding
 **Priority:** Must Have
@@ -85,7 +85,7 @@ Note:
 Acceptance Criteria:
 - Create business.
 - Add primary branch and configure hours.
-- Define services (e.g., Hair, Nails).
+- Define services and station templates.
 - Add initial staff and assign to services.
 
 ### Staff Management
@@ -120,7 +120,7 @@ Edge Cases:
 
 Acceptance Criteria:
 - Unique QR per business.
-- Customer joins correct queue.
+- Customer joins the correct branch and service queue.
 
 ### Customer Queue
 **Priority:** Must Have
@@ -129,6 +129,7 @@ Acceptance Criteria:
 - Live position.
 - Estimated wait.
 - Leave queue.
+- Queue is scoped to a branch and service.
 
 ### Notifications
 **Priority:** Must Have
@@ -188,6 +189,7 @@ Data source:
 - Notification failures.
 - Poor onboarding.
 - Guest phone numbers may be entered incorrectly without OTP verification, which can misroute notifications.
+- Overly vertical branding may limit adoption beyond the initial launch segment.
 
 ## 11. Assumptions
 

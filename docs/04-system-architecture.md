@@ -4,7 +4,7 @@ Version: 1.0
 
 ## Overview
 
-QueueLess is a mobile-first SaaS platform composed of React Native mobile clients (BUsiness and Customer), a NestJS backend, PostgreSQL database, and Firebase services for push notifications.
+QueueLess is a mobile-first SaaS platform composed of two React Native mobile clients (Business and Customer), a NestJS backend, a PostgreSQL database, and Firebase Cloud Messaging for push notifications.
 
 ## High-Level Architecture
 
@@ -41,12 +41,26 @@ React Native Mobile App(s)
 
 ## Client Layer
 
-### Mobile App
+### Mobile Clients
+
+#### QueueLess Business
 - Auth and onboarding
-- Queue entry and live queue status
+- Queue opening and closing
+- Visitor registration
+- Staff management
+- Live queue actions
+- Analytics
+- QR generation
+- Service configuration
+- Queue session management per service
+
+#### QueueLess Customer
 - Business discovery and selection
+- Guest join and optional authentication
+- Branch and service selection
+- Queue entry and live queue status
 - Notifications
-- Check-in and QR flows
+- Check-in and leave queue
 
 ## Backend Modules
 
@@ -76,7 +90,7 @@ WebSockets broadcast:
 
 ## Mobile Client Structure
 
-The mobile app uses a feature-first layout with clean layers:
+Each mobile app uses a feature-first layout with clean layers:
 
 ```text
 src/
@@ -126,8 +140,11 @@ ORM:
 
 Core entities:
 - Business
+- Branch
+- Service
 - Staff
 - Customer
+- QueueSession
 - QueueEntry
 - ServiceSession
 - Notification
@@ -144,7 +161,7 @@ Core entities:
 ## Security
 
 - HTTPS everywhere
-- Firebase Authentication
+- Backend-owned authentication
 - JWT verification
 - Input validation
 - Rate limiting
@@ -183,6 +200,6 @@ Growth:
 
 - Prefer modular monolith over microservices.
 - Use REST for CRUD and WebSockets for realtime queue updates.
-- Organize the mobile client by feature first, not by generic screen buckets.
+- Organize each mobile client by feature first, not by generic screen buckets.
 - Keep server state in TanStack Query, client UI state in Zustand, and form state in React Hook Form.
 - Optimize for rapid iteration and maintainability.

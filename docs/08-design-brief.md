@@ -139,7 +139,7 @@ Duration:
 
 # Key Screens
 
-Business App:
+QueueLess Business:
 - Splash
 - Authentication
 - Business onboarding
@@ -150,13 +150,17 @@ Business App:
 - Analytics
 - Settings
 
-Customer App:
-- Authentication
+QueueLess Customer:
+- Guest join / optional authentication
 - Find business
 - Join queue
 - Live queue status
 - Notifications
 - Profile
+
+Note:
+- First-time customer access should prioritize QR/link-based guest join.
+- Authentication should be presented as an optional step for saving history, notifications, and repeat visits.
 
 # Empty States
 

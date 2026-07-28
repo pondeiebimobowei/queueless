@@ -19,6 +19,11 @@ QueueLess uses a relational PostgreSQL database designed around a modular, multi
 
 # Entity Relationship Overview
 
+User
+├── RefreshTokens
+├── BusinessMemberships
+└── CustomerAccounts
+
 Business
 ├── Branches
 │   ├── Services
@@ -38,6 +43,115 @@ Staff
 
 QueueEntry
 └── ServiceSession
+
+## users
+
+Purpose:
+Stores platform identities for business owners, staff, customers, and admins.
+
+Fields:
+- id (UUID, PK)
+- email (nullable)
+- phone (nullable)
+- passwordHash
+- isEmailVerified
+- isPhoneVerified
+- status (ACTIVE | DISABLED)
+- createdAt
+- updatedAt
+
+Indexes:
+- email (unique, nullable)
+- phone (unique, nullable)
+
+---
+
+## refresh_tokens
+
+Purpose:
+Stores hashed refresh tokens for JWT rotation.
+
+Fields:
+- id (UUID, PK)
+- userId (FK)
+- tokenHash
+- revokedAt
+- expiresAt
+- createdAt
+- updatedAt
+
+Indexes:
+- userId
+- expiresAt
+- revokedAt
+
+---
+
+## business_memberships
+
+Purpose:
+Maps users to businesses with platform roles.
+
+Fields:
+- id (UUID, PK)
+- userId (FK)
+- businessId (FK)
+- role (OWNER | STAFF | ADMIN)
+- isActive
+- createdAt
+- updatedAt
+
+Indexes:
+- userId
+- businessId
+- businessId + role
+- businessId + userId (unique)
+
+---
+
+## customer_accounts
+
+Purpose:
+Bridges a business-scoped customer record to a platform user account.
+
+Fields:
+- id (UUID, PK)
+- userId (FK)
+- customerId (FK)
+- businessId (FK)
+- createdAt
+- updatedAt
+
+Indexes:
+- userId
+- customerId
+- businessId
+- businessId + customerId (unique)
+
+---
+
+## verification_tokens
+
+Purpose:
+Stores one-time tokens for email verification, password resets, and phone OTP flows.
+
+Fields:
+- id (UUID, PK)
+- userId (FK, nullable)
+- businessId (FK, nullable)
+- tokenHash
+- type (EMAIL_VERIFY | PASSWORD_RESET | PHONE_OTP | INVITE)
+- destination
+- expiresAt
+- consumedAt
+- createdAt
+
+Indexes:
+- userId
+- businessId
+- type
+- expiresAt
+- consumedAt
 
 # Tables
 
@@ -112,7 +226,7 @@ Indexes:
 ## queue_sessions
 
 Purpose:
-The daily queue instance for a specific service.
+The daily queue instance for a specific service at a branch.
 
 Fields:
 - id (UUID, PK)
@@ -203,6 +317,8 @@ Fields:
 - id
 - queueSessionId (FK)
 - businessId
+- branchId (FK)
+- serviceId (FK)
 - customerId
 - assignedStaffId (nullable)
 - position
@@ -226,9 +342,15 @@ Status Enum:
 Indexes:
 - queueSessionId
 - businessId
+- branchId
+- serviceId
 - status
 - joinedAt
 - assignedStaffId
+
+Note:
+- Queue entries always belong to a queue session that is scoped to a single branch and service.
+- The customer joins a service queue, not a business-wide queue.
 
 ---
 
