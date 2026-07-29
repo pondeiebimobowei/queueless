@@ -3,7 +3,16 @@
   "compilerOptions": {
     "types": [
       "jest"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["src/shared/*"],
+      "@shared/ui": ["src/shared/ui/index"],
+      "@shared/theme": ["src/shared/theme/index"],
+      "@features/*": ["src/features/*"],
+      "@core/*": ["src/core/*"],
+      "@app/*": ["src/app/*"]
+    }
   },
   "include": [
     "**/*.ts",
