@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { ChevronLeft } from 'lucide-react-native';
+import { Icon } from '../ui/Icon';
 import { OnboardingData } from './types';
 import { Step1Category } from './Step1Category';
 import { Step2Details } from './Step2Details';
@@ -88,7 +89,7 @@ export function BusinessOnboarding() {
             className="w-10 h-10 rounded-full border border-gray-200 items-center justify-center mb-6 bg-white"
             activeOpacity={0.7}
           >
-            <ChevronLeft size={24} color="#111827" />
+            <Icon icon={ChevronLeft} size={24} color="#111827" />
           </TouchableOpacity>
           
           <Text className="text-[#FF6B00] text-xs font-bold mb-3 tracking-wider">

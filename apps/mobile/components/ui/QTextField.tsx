@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, TextInputProps } from 'react-native';
 import { LucideIcon } from 'lucide-react-native';
+import { iconWithClassName } from '../../lib/icons';
 
 export interface QTextFieldProps extends TextInputProps {
   label: string;
@@ -9,6 +10,7 @@ export interface QTextFieldProps extends TextInputProps {
 }
 
 export function QTextField({ label, icon: Icon, rightElement, className, ...props }: QTextFieldProps) {
+  if (Icon) iconWithClassName(Icon);
   return (
     <View className={`mb-4 ${className || ''}`}>
       <Text className="text-sm font-semibold text-gray-800 mb-2">{label}</Text>

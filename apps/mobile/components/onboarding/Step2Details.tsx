@@ -4,6 +4,7 @@ import { Store, Star, MapPin, Map, Clock, Globe, Crosshair, ChevronDown, Pencil 
 import { StepProps } from './types';
 import { QTextField } from '../ui/QTextField';
 import { QButton } from '../ui/QButton';
+import { Icon } from '../ui/Icon';
 
 export function Step2Details({ data, updateData, onNext, onSaveLater }: StepProps) {
   return (
@@ -48,7 +49,7 @@ export function Step2Details({ data, updateData, onNext, onSaveLater }: StepProp
           placeholder="15 Admiralty Way, Lekki Phase 1, Lagos"
           value={data.address}
           onChangeText={(val) => updateData({ address: val })}
-          rightElement={<Crosshair size={20} color="#6b7280" />}
+          rightElement={<Icon icon={Crosshair} size={20} color="#6b7280" />}
         />
 
         <QTextField
@@ -57,7 +58,7 @@ export function Step2Details({ data, updateData, onNext, onSaveLater }: StepProp
           placeholder="Mon - Sat | 9:00 AM - 8:00 PM"
           value={data.hours}
           onChangeText={(val) => updateData({ hours: val })}
-          rightElement={<Pencil size={20} color="#6b7280" />}
+          rightElement={<Icon icon={Pencil} size={20} color="#6b7280" />}
         />
 
         <QTextField
@@ -66,7 +67,7 @@ export function Step2Details({ data, updateData, onNext, onSaveLater }: StepProp
           placeholder="NGN - Nigerian Naira"
           value={data.currency}
           onChangeText={(val) => updateData({ currency: val })}
-          rightElement={<ChevronDown size={20} color="#6b7280" />}
+          rightElement={<Icon icon={ChevronDown} size={20} color="#6b7280" />}
         />
         <View className="h-4" />
       </ScrollView>

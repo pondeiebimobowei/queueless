@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { LucideIcon } from 'lucide-react-native';
+import { iconWithClassName } from '../../lib/icons';
 
 export interface QRadioCardProps {
   id: string;
@@ -12,6 +13,7 @@ export interface QRadioCardProps {
 }
 
 export function QRadioCard({ id, title, description, icon: Icon, isSelected, onSelect }: QRadioCardProps) {
+  if (Icon) iconWithClassName(Icon);
   return (
     <TouchableOpacity
       activeOpacity={0.7}
@@ -25,7 +27,7 @@ export function QRadioCard({ id, title, description, icon: Icon, isSelected, onS
           isSelected ? 'bg-orange-100' : 'bg-gray-100'
         }`}
       >
-        <Icon size={24} color={isSelected ? '#FF6B00' : '#4b5563'} />
+        {Icon && <Icon size={24} color={isSelected ? '#FF6B00' : '#4b5563'} />}
       </View>
       <View className="flex-1">
         <Text className="text-base font-semibold text-gray-900">{title}</Text>

@@ -1,6 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { LucideIcon, GripVertical, Trash2 } from 'lucide-react-native';
+import { iconWithClassName } from '../../lib/icons';
+
+[GripVertical, Trash2].forEach(iconWithClassName);
 
 export interface QListItemProps {
   title: string;
@@ -12,6 +15,7 @@ export interface QListItemProps {
 }
 
 export function QListItem({ title, subtitle, icon: Icon, avatarUrl, onDelete, showDragHandle = false }: QListItemProps) {
+  if (Icon) iconWithClassName(Icon);
   return (
     <View className="flex-row items-center p-4 mb-3 rounded-xl border border-gray-200 bg-white">
       {showDragHandle && (
